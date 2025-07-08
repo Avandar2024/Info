@@ -15,5 +15,5 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: TAG=$(date +%s) docker-compose build my-app
+      run: docker compose build my-app
 
