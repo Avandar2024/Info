@@ -1,0 +1,30 @@
+services:
+  backend:
+    build: ./NJU_IAP
+    container_name: my_flask_app
+    # volumes: # 如果需要持久化数据或代码热加载 (开发时)
+    #   - ./backend/app:/app # 将本地 app 目录挂载到容器的 /app 目录
+    expose:
+      - "5000" # 仅在 Docker 网络内部暴露端口，供 Nginx 访问
+    # ports: # 如果需要直接从宿主机访问后端 API (通常不需要，Nginx 会代理)
+    #   - "5001:5000"
+   #enviroment:
+      # 在这里设置 Flask 相关的环境变量，例如：
+      # - DATABASE_URL=postgresql://user:password@db:5432/mydatabase # 如果有数据库服务
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: my_vue_nginx
+    ports:
+      - "80:80" # 将宿主机的 80 端口映射到容器的 80 端口
+    depends_on:
+      - backend # 确保后端服务启动后再启动前端
+    restart: unless-stopped
+
+# volumes: # 如果需要定义命名的卷 (例如用于数据库)
+#   postgres_data:
+
+# networks: # 如果需要自定义网络
+#   app_network:
+#     driver: bridge
