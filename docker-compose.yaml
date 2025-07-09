@@ -8,7 +8,7 @@ services:
       - "5000" # 仅在 Docker 网络内部暴露端口，供 Nginx 访问
     # ports: # 如果需要直接从宿主机访问后端 API (通常不需要，Nginx 会代理)
     #   - "5001:5000"
-   #enviroment:
+    #enviroment:
       # 在这里设置 Flask 相关的环境变量，例如：
       # - DATABASE_URL=postgresql://user:password@db:5432/mydatabase # 如果有数据库服务
     restart: unless-stopped

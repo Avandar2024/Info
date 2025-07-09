@@ -1,33 +1,32 @@
-# frontend
+# SolidStart
 
-This template should help get you started developing with Vue 3 in Vite.
+Everything you need to build a Solid project, powered by [`solid-start`](https://start.solidjs.com);
 
-## Recommended IDE Setup
+## Creating a project
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+```bash
+# create a new project in the current directory
+npm init solid@latest
 
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-pnpm install
+# create a new project in my-app
+npm init solid@latest my-app
 ```
 
-### Compile and Hot-Reload for Development
+## Developing
 
-```sh
-pnpm dev
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+
+```bash
+npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
 ```
 
-### Type-Check, Compile and Minify for Production
+## Building
 
-```sh
-pnpm build
-```
+Solid apps are built with _presets_, which optimise your project for deployment to different environments.
+
+By default, `npm run build` will generate a Node app that you can run with `npm start`. To use a different preset, add it to the `devDependencies` in `package.json` and specify in your `app.config.js`.
+
+## This project was created with the [Solid CLI](https://github.com/solidjs-community/solid-cli)
