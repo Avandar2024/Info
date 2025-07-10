@@ -1,11 +1,10 @@
 # FastAPI应用程序工厂函数
 from contextlib import asynccontextmanager
 
+from fast_api.app.db import create_db_and_tables
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
-
-from fast_api.app.db import create_db_and_tables
 
 
 @asynccontextmanager
