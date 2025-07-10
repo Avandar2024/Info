@@ -1,16 +1,37 @@
-# 使用官方 Python 镜像作为基础镜像
-FROM python:3.12-slim
+# An example using multi-stage image builds to create a final image without uv.
 
-# 设置工作目录
-WORKDIR /flask_app
-COPY . /flask_app
+# First, build the application in the `/app` directory.
+# See `Dockerfile` for details.
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 
-RUN pip install --no-cache-dir -r requirements.txt
+# Disable Python downloads, because we want to use the system interpreter
+# across both images. If using a managed Python version, it needs to be
+# copied from the build image into the final image; see `standalone.Dockerfile`
+# for an example.
+ENV UV_PYTHON_DOWNLOADS=0
 
-# 复制应用代码到工作目录
-WORKDIR /flask_app/backend
+WORKDIR /app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project --no-dev
+COPY . /app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-dev
 
-# Gunicorn 的配置 (可以根据需要调整 worker 数量等)
-# 假设你的 Flask app 实例在 app/main.py 中，变量名为 app
-CMD ["python","run.py"]
-# CMD ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5000", "app:app_instance"]
+
+# Then, use a final image without uv
+FROM python:3.12-slim-bookworm
+# It is important to use the image that matches the builder, as the path to the
+# Python executable must be the same, e.g., using `python:3.11-slim-bookworm`
+# will fail.
+
+# Copy the application from the builder
+COPY --from=builder --chown=app:app /app /app
+
+# Place executables in the environment at the front of the path
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Run the FastAPI application by default
+CMD ["python", "/app/fast_api/setup.py"]

@@ -1,11 +1,11 @@
 from sqlmodel import Session, text
 
-from .app.db import engine
-from .app.models.user import User
-from .app.services.date_query_service import generate_date_data
-from .app.services.ddl_service import generate_ddl_events
-from .app.services.news_service import generate_daily_news
-from .app.services.query_service import query_by_question
+from ..app.db import engine
+from ..app.models.user import User
+from ..app.services.date_query_service import generate_date_data
+from ..app.services.ddl_service import generate_ddl_events
+from ..app.services.news_service import generate_daily_news
+from ..app.services.query_service import query_by_question
 
 
 def test_database_connection():
