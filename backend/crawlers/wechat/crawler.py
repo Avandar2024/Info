@@ -113,27 +113,27 @@ def process_text_content(html):
 
 
 def crawl_and_save(link, link_index, today_str, account_path):
-    """爬取并保存内容"""
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context()
-        page = context.new_page()
-        page.goto(link, wait_until='networkidle')
-        time.sleep(random.uniform(1, 3))
-        html = page.content()
-        text_content = process_text_content(html)
+	"""爬取并保存内容"""
+	with sync_playwright() as p:
+		browser = p.chromium.launch(headless=True)
+		context = browser.new_context()
+		page = context.new_page()
+		page.goto(link, wait_until='networkidle')
+		time.sleep(random.uniform(1, 3))
+		html = page.content()
+		text_content = process_text_content(html)
 
-        date_match = re.search(r'\*(.*?)\*', text_content)
-        if date_match:
-            date_str = date_match.group(1)
-            date_format_match = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', date_str)
-            if date_format_match:
-                year, month, day = date_format_match.groups()
-                today_str = f'{year}-{int(month):02d}-{int(day):02d}'
+		date_match = re.search(r'\*(.*?)\*', text_content)
+		if date_match:
+			date_str = date_match.group(1)
+			date_format_match = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', date_str)
+			if date_format_match:
+				year, month, day = date_format_match.groups()
+				today_str = f'{year}-{int(month):02d}-{int(day):02d}'
 
-        save_text_as_text(text_content, link_index, link, today_str, account_path)
-        
-        browser.close()
+		save_text_as_text(text_content, link_index, link, today_str, account_path)
+
+		browser.close()
 
 
 def main():

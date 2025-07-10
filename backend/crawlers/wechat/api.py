@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import csv
 import os
 import random
@@ -8,7 +7,9 @@ import requests
 
 headers = {
 	'cookie': '',
-	'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0',
+	'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+  AppleWebKit/537.36 (KHTML, like Gecko) \
+  Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0',
 }
 url = 'https://mp.weixin.qq.com/cgi-bin/appmsg'
 # 公众号配置字典，key为公众号名称，value为对应的fakeid
@@ -81,7 +82,7 @@ def reset_all_labels():
 		temp_rows = []
 
 		# 读取现有数据
-		with open(csv_file, 'r', encoding='utf-8-sig') as f:
+		with open(csv_file, encoding='utf-8-sig') as f:
 			reader = csv.DictReader(f)
 			# 保存表头
 			fieldnames = reader.fieldnames
@@ -108,14 +109,14 @@ if __name__ == '__main__':
 	reset_all_labels()
 	print('已重置所有文章标签为0')
 
-	for account_name in accounts.keys():
+	for account_name in accounts:
 		print(f'正在爬取公众号：{account_name}')
 		csv_file = f'article_link/{account_name}.csv'
 
 		# 读取现有链接
 		existing_links = set()
 		if os.path.exists(csv_file):
-			with open(csv_file, 'r', encoding='utf-8-sig') as f:
+			with open(csv_file, encoding='utf-8-sig') as f:
 				reader = csv.DictReader(f)
 				for row in reader:
 					existing_links.add(row['链接'])
@@ -133,10 +134,10 @@ if __name__ == '__main__':
 		with open(csv_file, 'w', encoding='utf-8-sig', newline='') as f:
 			writer = csv.writer(f)
 			writer.writerow(['时间', '标题', '链接', '标签', '公众号'])
-			for ct, tt, lk, lb in zip(create_times, titles, links, labels):
+			for ct, tt, lk, lb in zip(create_times, titles, links, labels, strict=True):
 				writer.writerow([ct, tt, lk, lb, account_name])
 
 		print(f'{account_name} 爬取完成，共获取 {len(links)} 条数据')
 		# 可选：打印详细信息
-		for ct, tt, lk, lb in zip(create_times, titles, links, labels):
+		for ct, tt, lk, lb in zip(create_times, titles, links, labels, strict=True):
 			print(f'[{account_name}] {ct} {tt} {lk} {lb}')

@@ -6,7 +6,8 @@ from html2text import HTML2Text
 
 base_url = 'https://jw.nju.edu.cn'
 news = []
-user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'
+user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) \
+              Chrome/135.0.0.0 Safari/537.36'
 headers = {
 	'User-Agent': user_agent,
 	'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
@@ -52,7 +53,11 @@ class News:
 		self.content = get_content(str(self.href) if self.href is not None else '')
 
 	def __str__(self):
-		return f'title:{self.title}\ntype:{self.type}\ntime:{self.time}\nurl:{base_url + self.href}\n\n content:{self.content}\n\n\n'
+		return f'title:{self.title}\n\
+            type:{self.type}\n\
+            time:{self.time}\n\
+            url:{base_url + self.href} \n\n\
+            content:{self.content}\n\n\n'
 
 
 def get_news(num: int = 10) -> list[News]:

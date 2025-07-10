@@ -1,6 +1,7 @@
-from dashscope import Application
-from http import HTTPStatus
 import os
+from http import HTTPStatus
+
+from dashscope import Application
 
 API_RAG = os.getenv('DASHSCOPE_API_KEY_RAG')
 

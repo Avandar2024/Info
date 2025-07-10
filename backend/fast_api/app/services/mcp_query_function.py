@@ -1,11 +1,12 @@
-from http import HTTPStatus
-from dashscope import Application
-from datetime import datetime
+import json
 import threading
 import uuid
-import json
-import re
-import os
+from datetime import datetime
+from http import HTTPStatus
+
+from dashscope import Application
+
+from utils.json_util import safe_json_parse
 
 API_KEY_INTERACT = 'sk-842115343a2c4f928c445da9e1a7a5b9'
 API_KEY_SEARCH = 'sk-f7d1df9afce849a5aad2c27a5a85c97d'
@@ -13,32 +14,6 @@ API_KEY_SEARCH = 'sk-f7d1df9afce849a5aad2c27a5a85c97d'
 # API_KEY_SEARCH = os.getenv("DASHSCOPE_API_KEY_SEARCH")
 APP_ID_INTERACT = 'd983ba22ecd94a76b83e14f58aea3877'
 APP_ID_SEARCH = '105936f2ac6949da98c4375b97fa082f'  # 五并发
-
-
-# 安全解析JSON加自动修复
-def safe_json_parse(raw_str):
-	try:
-		return json.loads(raw_str)
-	except json.JSONDecodeError:
-		# 去除代码块包裹
-		repaired = re.sub(r'^.*?```(?:json)?\s*({.*?})\s*```.*$', r'\1', raw_str, flags=re.DOTALL)
-		# 替换中文引号
-		repaired = repaired.replace('“', '"').replace('”', '"')
-		# 处理尾随逗号
-		repaired = re.sub(r',\s*([}\]])', r'\1', repaired)
-		try:
-			return json.loads(repaired)
-		except Exception as e:
-			raw_str = repaired
-			print(f'尝试修复JSON格式失败: {str(e)}')
-
-	# 若上述手段都不行，暴力提取第一个完整JSON
-	try:
-		json_str = re.search(r'\{.*\}', raw_str, flags=re.DOTALL).group()
-		return json.loads(json_str)
-	except:
-		raise ValueError('无法提取有效JSON内容')
-
 
 def call_agent(api_key, app_id, query, is_stream=False):
 	if query == '':
@@ -177,9 +152,8 @@ def get_query_progress(query_id):
 		progress_info = query_progress[query_id].copy()
 
 		# 如果查询已完成，返回最终结果
-		if progress_info.get('completed', False):
+		if progress_info.get('completed', False) and query_id in query_progress:
 			# 清理不需要的进度信息，避免内存泄漏
-			if query_id in query_progress:
 				del query_progress[query_id]
 
 		return progress_info

@@ -1,9 +1,10 @@
-import re
-import os
 import json
+import os
+import re
 from base64 import b64encode as b64
+
 from openai import OpenAI
-from playwright.sync_api import sync_playwright, Playwright
+from playwright.sync_api import Playwright
 
 
 def into_json(json_str) -> str:
@@ -34,7 +35,7 @@ def into_json(json_str) -> str:
 def handle_verify_code(png: bytes) -> str:
 	png_base64 = b64(png).decode('utf-8')
 	client = OpenAI(
-		api_key=os.getenv('aliyun_api_trans'),
+		api_key=os.getenv('aliyun_api_trans'),  # noqa: SIM112
 		base_url='https://dashscope.aliyuncs.com/compatible-mode/v1',
 	)
 	config = {
@@ -63,7 +64,7 @@ def handle_verify_code(png: bytes) -> str:
 	try:
 		v_code = re.findall(pattern, response)[0]
 		return v_code
-	except:
+	except IndexError:
 		exit('error')
 
 
@@ -80,17 +81,21 @@ def req(playwright: Playwright, user: User) -> dict:
 	page = context.new_page()
 	page.goto('https://v3.chaoxing.com/toJcLogin')
 	page.wait_for_load_state('networkidle')
+
 	verify = page.locator('xpath=//*[@id="verifyCanvas"]')
 	phone = page.locator('xpath=//*[@id="phone"]')
 	pwd = page.locator('xpath=//*[@id="pwd"]')
 	log_code = page.locator('xpath=//*[@id="LogCode"]')
 	login = page.locator('xpath=//*[@id="login"]')
+
+	# fill in the login form
 	phone.fill(user.phone)
 	pwd.fill(user.pwd)
 	png = verify.screenshot()
 	v_code = handle_verify_code(png)
 	log_code.fill(v_code)
 	login.click()
+
 	page.wait_for_timeout(2000)
 	jump = page.locator('xpath=//*[@id="showPrompt"]/a')
 	if jump.is_visible():
@@ -124,11 +129,3 @@ def into_file(res: dict) -> bool:
 		for k, v in info.items():
 			f.write(f'ddl:{k}\ncontent:\n{v}\n\n')
 	return True
-
-
-if __name__ == '__main__':
-	with sync_playwright() as playwright:
-		jyr = User('17805258668', 'xiaohai20063015')
-		while True:
-			if into_file(req(playwright, jyr)):
-				break

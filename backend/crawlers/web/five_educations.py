@@ -1,4 +1,3 @@
-from curl_cffi import requests
 from playwright.sync_api import sync_playwright
 
 base_url: str = 'https://ndwy.nju.edu.cn/dztml/#/'

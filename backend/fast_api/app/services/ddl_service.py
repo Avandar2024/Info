@@ -1,41 +1,11 @@
 # DDL事件服务
 import datetime
-import json
-import re
 
 from sqlmodel import Session, text
 
 from app.settings import MESSAGE_TYPES
 
 # DDL字段映射配置
-
-
-def safe_json_parse(raw_str, max_retries=3):
-	# 安全解析JSON加自动修复
-	for _ in range(max_retries):
-		try:
-			return json.loads(raw_str)
-		except json.JSONDecodeError:
-			# 去除代码块包裹
-			repaired = re.sub(
-				r'^.*?```(?:json)?\s*({.*?})\s*```.*$', r'\1', raw_str, flags=re.DOTALL
-			)
-			# 替换中文引号
-			repaired = repaired.replace('"', '"').replace('"', '"')
-			# 处理尾随逗号
-			repaired = re.sub(r',\s*([}\]])', r'\1', repaired)
-			try:
-				return json.loads(repaired)
-			except Exception as e:
-				raw_str = repaired
-				print(f'尝试修复JSON格式失败: {str(e)}')
-
-	# 若上述手段都不行，暴力提取第一个完整JSON
-	match = re.search(r'\{.*\}', raw_str, flags=re.DOTALL)
-	if match is None:
-		raise ValueError('找不到有效的JSON内容')
-	json_str = match.group()
-	return json.loads(json_str)
 
 
 def generate_ddl_events(session: Session):
