@@ -1,6 +1,6 @@
 services:
   backend:
-    build: ./NJU_IAP
+    build: ./backend
     container_name: my_flask_app
     # volumes: # 如果需要持久化数据或代码热加载 (开发时)
     #   - ./backend/app:/app # 将本地 app 目录挂载到容器的 /app 目录

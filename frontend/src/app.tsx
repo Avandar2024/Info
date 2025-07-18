@@ -1,20 +1,16 @@
-import { Router } from "@solidjs/router";
-import { FileRoutes } from "@solidjs/start/router";
-import { Suspense } from "solid-js";
-import Nav from "~/components/Nav";
-import "./app.css";
+import type { Component } from "solid-js";
+import CallyDatePicker from "./test";
 
-export default function App() {
+const App: Component = () => {
+  const handleDateChange = (date: string) => {
+    console.log("Selected date:", date);
+  };
   return (
-    <Router
-      root={props => (
-        <>
-          <Nav />
-          <Suspense>{props.children}</Suspense>
-        </>
-      )}
-    >
-      <FileRoutes />
-    </Router>
+    <div>
+      <p class="text-4xl text-green-700 text-center py-20">Hello tailwind!</p>
+      <CallyDatePicker onDateChange={handleDateChange} />
+    </div>
   );
-}
+};
+
+export default App;

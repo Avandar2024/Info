@@ -1,10 +1,11 @@
 # FastAPI应用程序工厂函数
 from contextlib import asynccontextmanager
 
-from fast_api.app.db import create_db_and_tables
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
+
+from app.db import create_db_and_tables
 
 
 @asynccontextmanager
@@ -44,7 +45,7 @@ def create_fastapi_app() -> FastAPI:
 	)
 
 	# 注册路由
-	from fast_api.app.routes.fastapi_routes import router as api_router
+	from routes.fastapi_routes import router as api_router
 
 	app.include_router(api_router, prefix='/api')
 
